@@ -171,6 +171,7 @@ export class UsersService {
       ip: userIp
     });
     res.cookie('user', JSON.stringify(userBD), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.status(200).send({ message: 'Usuario actulizado correctamente.'});
   }
 
   //ACTUALIZAR CONTRASEÑA 
@@ -367,6 +368,7 @@ export class UsersService {
     const user = await this.findOne(userId);
     //colocar la cookie en la respuesta - user
     res.cookie('user', JSON.stringify(user), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.status(200).send({ message: 'Sesion activa.'});
   }
 
   // Extracción del token desde las cookies
