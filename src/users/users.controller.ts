@@ -31,8 +31,8 @@ export class UsersController {
 
   @Patch(':id')
   @UseGuards(ClienteAdminGuard)
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto, @Req() request: Request) {
-    return this.usersService.update(id, updateUserDto, request);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto, @Req() request: Request, @Res() res: ExpressResponse) {
+    return this.usersService.update(id, updateUserDto, request, res);
   }
 
   @Patch('password/:id')
@@ -57,8 +57,8 @@ export class UsersController {
   // Nueva ruta para el perfil usando la cookie
   @Get('profile')
   @UseGuards(ClienteAdminGuard)
-  profile(@Req() request: Request) {
-    return this.usersService.profile(request);
+  profile(@Req() request: Request, @Res() res: ExpressResponse) {
+    return this.usersService.profile(request, res);
   }
 
 }

@@ -107,7 +107,7 @@ export class UsersService {
   }
 
   //ACTUALIZAR
-  async update(id: string, updateUserDto: UpdateUserDto, request: Request) {
+  async update(id: string, updateUserDto: UpdateUserDto, request: Request, res: ExpressResponse) {
 
     //Verificar que el usuario exista
     const userBD = await this.findOne(id);
@@ -170,7 +170,7 @@ export class UsersService {
       detail: `Usuario actualizado correctamente.`,
       ip: userIp
     });
-    return userBD;
+    res.cookie('user', JSON.stringify(userBD), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
   }
 
   //ACTUALIZAR CONTRASEÑA 
@@ -279,11 +279,14 @@ export class UsersService {
     // crear el token
     const token = await this.sesionService.create({userId: userBDId,ip: userIp,userAgent: userAgent,userType: userAuth.userType});
     
-    //colocar la cookie en la respuesta
+    //colocar la cookie en la respuesta - token
     res.cookie('access_token', token, {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost'});
-    
+
+    //colocar la cookie en la respuesta - user
+    res.cookie('user', JSON.stringify(userAuth), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
+
     //devolver el usuario logueado
-    res.status(200).send({message: 'Acceso autorizado.',user: userAuth,});
+    res.status(200).send({message: 'Acceso autorizado.', userType: userAuth.userType});
   }
   
   // Buscar por email y retorna el ID del email
@@ -351,22 +354,19 @@ export class UsersService {
       throw new UnauthorizedException('Acceso no autorizado.');
     //logica para colocar en inactiva la cuenta
     await this.sesionService.deactivateSession(access_token)
-    res.clearCookie('access_token', {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'strict',
-      domain: 'localhost'
-    });
-    res.status(200).send({ message: 'Sesión cerrada correctamente.' });
+    res.clearCookie('access_token', {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.clearCookie('user', {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.status(200).send({ message: 'Sesión cerrada correctamente.'});
   }
 
-  async profile(req: Request){
+  async profile(req: Request, res: ExpressResponse){
     const access_token = this.extractToken(req)
     if(!access_token)
       throw new UnauthorizedException('Acceso no autorizado.');
     const userId = await this.sesionService.userLogued(access_token)
-    if(userId) return await this.findOne(userId);
-    return null;
+    const user = await this.findOne(userId);
+    //colocar la cookie en la respuesta - user
+    res.cookie('user', JSON.stringify(user), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
   }
 
   // Extracción del token desde las cookies
