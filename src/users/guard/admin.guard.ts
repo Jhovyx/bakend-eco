@@ -18,6 +18,7 @@ export class AdminGuard implements CanActivate {
     try {
       //verificar si tiene la firma
       const payload = await this.jwtService.verifyAsync(token,{secret: process.env.JWT_SECRET})
+      
       //verificar si existe e payload
       if(!payload)
         throw new UnauthorizedException('Acceso no autorizado.');

@@ -25,7 +25,6 @@ export class SesionesService {
       const primaryKey = uuid();
       //crear el token
       const token = await this.jwtService.signAsync({...createSesioneDto,refreshToken,primaryKey});
-
       const newSesion: Sesion = {
         primaryKey,
         ...createSesioneDto,
@@ -35,7 +34,6 @@ export class SesionesService {
         createdAt: new Date().getTime(),
         updatedAt: null,
       }
-      
       //preparacion de la consulta 
       const command = new PutCommand({
         TableName: 'sesiones',
@@ -44,7 +42,6 @@ export class SesionesService {
         }
       });
       await this.dynamoService.dynamoCliente.send(command)
-      
       return token
     }else{
       //actulizar solo una sesion enviar su token y su refresh si hay 
@@ -53,21 +50,20 @@ export class SesionesService {
 
       const token = await this.jwtService.signAsync({...createSesioneDto,refreshToken,primaryKey});
       const updateCommand = new UpdateItemCommand({
-  TableName: 'sesiones',
-  Key: {
-    primaryKey: { S: SesionDB.primaryKey.S },
-  },
-  UpdateExpression: 'SET #tk = :token, estado = :estado, updatedAt = :updatedAt',
-  ExpressionAttributeNames: {
-    '#tk': 'token',  // Alias para 'token'
-  },
-  ExpressionAttributeValues: {
-    ':token': { S: token },
-    ':estado': { BOOL: true },
-    ':updatedAt': { N: new Date().getTime().toString() },
-  },
-});
-
+      TableName: 'sesiones',
+        Key: {
+          primaryKey: { S: SesionDB.primaryKey.S },
+        },
+        UpdateExpression: 'SET #tk = :token, estado = :estado, updatedAt = :updatedAt',
+        ExpressionAttributeNames: {
+          '#tk': 'token',  // Alias para 'token'
+        },
+        ExpressionAttributeValues: {
+          ':token': { S: token },
+          ':estado': { BOOL: true },
+          ':updatedAt': { N: new Date().getTime().toString() },
+        },
+      });
       await this.dynamoService.dynamoCliente.send(updateCommand);
       return token
     }
@@ -95,7 +91,6 @@ export class SesionesService {
     // Si todas están activas, retornar 'x'
     return 'x';
   }
-
 
   async verifyToken(access_token: string) {
 
