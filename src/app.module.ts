@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { DynamodbModule } from './dynamodb/dynamodb.module';
 import { UsersModule } from './users/users.module';
 import { ActivitiesModule } from './activities/activities.module';
@@ -7,10 +7,19 @@ import { AsientosModule } from './asientos/asientos.module';
 import { EstacionesModule } from './estaciones/estaciones.module';
 import { ViajesModule } from './viajes/viajes.module';
 import { SesionesModule } from './sesiones/sesiones.module';
+import { SesionesMiddleware } from './sesiones/sesiones.middleware';
 
 @Module({
   imports: [DynamodbModule, UsersModule, ActivitiesModule, BusesModule, AsientosModule, EstacionesModule, ViajesModule, SesionesModule],
   controllers: [],
-  providers: [],
+  providers: [SesionesMiddleware],
 })
-export class AppModule {}
+export class AppModule {
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(SesionesMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL })
+  }
+
+}
