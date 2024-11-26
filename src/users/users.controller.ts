@@ -22,9 +22,9 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-
+  
   @Get('user/:id')
-  @UseGuards(ClienteAdminGuard)
+  @UseGuards(AdminGuard)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.findOne(id);
   }

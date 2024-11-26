@@ -354,7 +354,7 @@ export class UsersService {
     if(!access_token)
       throw new UnauthorizedException('Acceso no autorizado.');
     //logica para colocar en inactiva la cuenta
-    await this.sesionService.deactivateSession(access_token)
+    await this.sesionService.deactivateSession(access_token);
     res.clearCookie('access_token', {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost'});
     res.clearCookie('user', {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
     res.status(200).send({ message: 'Sesión cerrada correctamente.'});
