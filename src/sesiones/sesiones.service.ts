@@ -154,5 +154,12 @@ export class SesionesService {
       return null;
     }
   }
+
+  async verifyAllToken(tokenCookie: string) {
+    return await this.jwtService.verifyAsync(tokenCookie, {
+      secret: process.env.JWT_SECRET,
+      ignoreExpiration: true, // Ignorar la expiración del token
+    });
+  }  
     
 }
