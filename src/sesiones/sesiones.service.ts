@@ -4,9 +4,11 @@ import { UpdateSesioneDto } from './dto/update-sesione.dto';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuid } from 'uuid';
 import { Sesion } from './entities/sesione.entity';
-import { PutCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamodbService } from 'src/dynamodb/dynamodb.service';
 import { QueryCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
+import { JwtPayload } from './entities/payload.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class SesionesService {
@@ -46,7 +48,7 @@ export class SesionesService {
         return token
       }else{
         //actulizar solo una sesion enviar su token y su refresh si hay 
-        const refreshToken = SesionDB.refreshToken.S;
+        const refreshToken = uuid();
         const primaryKey = SesionDB.primaryKey.S;
         
         const token = await this.jwtService.signAsync({...createSesioneDto,refreshToken,primaryKey});
@@ -71,6 +73,27 @@ export class SesionesService {
     } catch (error) {
       throw new NotFoundException('Ocurrio un error inesperado.');
     }
+  }
+
+  async refrechToken(payload: JwtPayload, user: User) {
+    const token = await this.jwtService.signAsync(payload);
+    const updateCommand = new UpdateItemCommand({
+      TableName: 'sesiones',
+      Key: {
+        primaryKey: { S: payload.primaryKey },
+      },
+      UpdateExpression: 'SET #tk = :token, estado = :estado, updatedAt = :updatedAt',
+      ExpressionAttributeNames: {
+        '#tk': 'token',  // Alias para 'token'
+      },
+      ExpressionAttributeValues: {
+        ':token': { S: token },
+        ':estado': { BOOL: true },
+        ':updatedAt': { N: new Date().getTime().toString() },
+      },
+    });
+    await this.dynamoService.dynamoCliente.send(updateCommand);
+    return token
   }
 
   private async findOne(userId: string) {
@@ -161,5 +184,22 @@ export class SesionesService {
       ignoreExpiration: true, // Ignorar la expiración del token
     });
   }  
+
+  //verificar si la sesion esta activa 
+  async verifySesion(primaryKey: string) {
+    const command = new GetCommand({
+      TableName: 'sesiones',
+      Key: {
+        primaryKey:  primaryKey ,
+      },
+      ProjectionExpression: 'estado',
+    });
+    const {Item} = await this.dynamoService.dynamoCliente.send(command);
+    if (!Item)
+      throw new NotFoundException('Sesion no encontrada.');
+    if(Item.estado !== true)
+      throw new NotFoundException('Sesion inactiva.')
+    return Item.estado;
+  }
     
 }

@@ -1,6 +1,7 @@
-import { Injectable, NestMiddleware, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NestMiddleware, Req, Res , UnauthorizedException } from '@nestjs/common';
 import { SesionesService } from './sesiones.service';
-import { NextFunction } from 'express';
+import { NextFunction, Request, Response as ExpressResponse } from 'express';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class SesionesMiddleware implements NestMiddleware {
@@ -9,36 +10,43 @@ export class SesionesMiddleware implements NestMiddleware {
     private readonly sesionService: SesionesService
   ){}
 
-  async use(@Req() req: Request, @Res() res: Response, next: NextFunction) {
-    
-    const cookieHeader = req.headers['cookie'];
+  async use(@Req() req: Request, @Res() res: ExpressResponse, next: NextFunction) {
+    const tokenCookie = req.cookies['access_token'];
+    const userCookie = req.cookies['user'];
 
-    if (cookieHeader) {
-      const cookies = this.parseCookies(cookieHeader);
-
-      const tokenCookie = cookies['access_token'];
-      const userCookie = cookies['user'];
-
-      if(tokenCookie && userCookie) {
-        const payload = await this.sesionService.verifyAllToken(tokenCookie);
-        const user = JSON.parse(userCookie);
-        
-        if(payload.userId !== user.primaryKey) 
-          throw new UnauthorizedException();
-
-        if(payload.userType !== user.userType)
-          throw new UnauthorizedException();
+    if(tokenCookie && userCookie) {
+      const payload = await this.sesionService.verifyAllToken(tokenCookie);
+      const user: User = JSON.parse(userCookie);
+      
+      //verificar si la sesion esta activa si no limpiarla
+      const isActive = await this.sesionService.verifySesion(payload.primaryKey);
+      if (!isActive) {
+        res.clearCookie('access_token');
+        res.clearCookie('user');
+        throw new UnauthorizedException();
       }
 
-    }
-    next();
-  }
+      if(payload.userId !== user.primaryKey) 
+        throw new UnauthorizedException();
 
-  private parseCookies(cookieHeader: string): { [key: string]: string } {
-    return cookieHeader.split(';').reduce((cookies: { [key: string]: string }, cookie) => {
-      const [name, value] = cookie.split('=').map(part => part.trim());
-      cookies[name] = decodeURIComponent(value);
-      return cookies;
-    }, {});
+      if(payload.userType !== user.userType)
+        throw new UnauthorizedException();
+
+
+      //verificar la fecha de expiracion si esta en los proximos 10 minutos a vencer o si ya vencio
+      const fechaHoraActual = Math.floor(Date.now() / 1000);
+      const fechaHoraExpiracion = payload.exp;
+      const minutosAvencer = 10 * 60;
+
+      if(fechaHoraExpiracion - fechaHoraActual <= minutosAvencer){
+        const token = await this.sesionService.refrechToken(payload, user);
+    
+        //colocar la cookie en la respuesta - token
+        res.cookie('access_token', token, {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost'});
+      }
+      
+    }
+    
+    next();
   }
 }
