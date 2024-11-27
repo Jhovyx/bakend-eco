@@ -170,7 +170,7 @@ export class UsersService {
       detail: `Usuario actualizado correctamente.`,
       ip: userIp
     });
-    res.cookie('user', JSON.stringify(userBD), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.cookie('user', JSON.stringify(userBD), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});
     res.status(200).send({ message: 'Usuario actulizado correctamente.'});
   }
 
@@ -281,10 +281,10 @@ export class UsersService {
     const token = await this.sesionService.create({userId: userBDId,ip: userIp,userAgent: userAgent,userType: userAuth.userType});
     
     //colocar la cookie en la respuesta - token
-    res.cookie('access_token', token, {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.cookie('access_token', token, {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});
 
     //colocar la cookie en la respuesta - user
-    res.cookie('user', JSON.stringify(userAuth), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.cookie('user', JSON.stringify(userAuth), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});
 
     //devolver el usuario logueado
     res.status(200).send({message: 'Acceso autorizado.', userType: userAuth.userType});
@@ -367,7 +367,7 @@ export class UsersService {
     const userId = await this.sesionService.userLogued(access_token)
     const user = await this.findOne(userId);
     //colocar la cookie en la respuesta - user
-    res.cookie('user', JSON.stringify(user), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
+    res.cookie('user', JSON.stringify(user), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});
     res.status(200).send({ message: 'Sesion activa.'});
   }
 
