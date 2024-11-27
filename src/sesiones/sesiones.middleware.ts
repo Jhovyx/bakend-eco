@@ -42,7 +42,7 @@ export class SesionesMiddleware implements NestMiddleware {
         const token = await this.sesionService.refrechToken(payload, user);
     
         //colocar la cookie en la respuesta - token
-        res.cookie('access_token', token, {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost'});
+        res.cookie('access_token', token, {httpOnly: true,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});
       }
       
     }
