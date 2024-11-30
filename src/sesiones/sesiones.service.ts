@@ -168,16 +168,6 @@ export class SesionesService {
     }
   }
 
-  async userLogued(access_token: string){
-    try {
-      const payload = await this.jwtService.verifyAsync(access_token,{secret: process.env.JWT_SECRET})
-      if(payload) return payload.userId;
-      return null;
-    } catch (error) {
-      return null;
-    }
-  }
-
   async verifyAllToken(tokenCookie: string) {
     return await this.jwtService.verifyAsync(tokenCookie, {
       secret: process.env.JWT_SECRET,

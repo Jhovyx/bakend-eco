@@ -359,18 +359,7 @@ export class UsersService {
     res.clearCookie('user', {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost'});
     res.status(200).send({ message: 'Sesión cerrada correctamente.'});
   }
-
-  async profile(req: Request, res: ExpressResponse){
-    const access_token = this.extractToken(req)
-    if(!access_token)
-      throw new UnauthorizedException('Acceso no autorizado.');
-    const userId = await this.sesionService.userLogued(access_token)
-    const user = await this.findOne(userId);
-    //colocar la cookie en la respuesta - user
-    res.cookie('user', JSON.stringify(user), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});
-    res.status(200).send({ message: 'Sesion activa.'});
-  }
-
+  
   // Extracción del token desde las cookies
   private extractToken(request: Request) {
     // Si existe la cookie access_token, la devolvemos
