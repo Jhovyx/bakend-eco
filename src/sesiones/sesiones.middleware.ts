@@ -17,7 +17,7 @@ export class SesionesMiddleware implements NestMiddleware {
     const userCookie = req.cookies['user'];
     const requestedUrl = req.url; //url de la peticion
     const method = req.method;//metodo de la peticion
-
+    
     if(tokenCookie && userCookie) {
       const payload = await this.sesionService.verifyAllToken(tokenCookie);
       const user: User = JSON.parse(userCookie);
@@ -65,7 +65,7 @@ export class SesionesMiddleware implements NestMiddleware {
       if(estado !== true){
         res.clearCookie('access_token');
         res.clearCookie('user');
-        throw new UnauthorizedException();
+        return res.status(400).send({ message: 'Usuario no authenticado.'});
       }
       
       //verificar si la sesion esta activa si no limpiarla
@@ -73,7 +73,7 @@ export class SesionesMiddleware implements NestMiddleware {
       if (!isActive) {
         res.clearCookie('access_token');
         res.clearCookie('user');
-        throw new UnauthorizedException();
+        return res.status(400).send({ message: 'Usuario no authenticado.'});
       }
 
       //verificar la fecha de expiracion si esta en los proximos 10 minutos a vencer o si ya vencio
@@ -112,7 +112,7 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/users/:id', methods: ['PATCH'] }, //ACTULIZAR UN USUARIO
     { url: '/v1/users/user/:id', methods: ['GET'] }, //OBTENER USUARIO POR ID
     { url: '/v1/users/logout', methods: ['GET'] }, //CERRAR SESION
-    { url: '/v1/users/password/:id', methods: ['GET'] }, //CAMBIAR CONTRASEÑA
+    { url: '/v1/users/password/:id', methods: ['PATCH'] }, //CAMBIAR CONTRASEÑA
     
     { url: '/v1/viajes', methods: ['GET', 'POST'] }, //OBTENER VIAJES, CREAR
     { url: '/v1/viajes/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
@@ -134,7 +134,7 @@ export class SesionesMiddleware implements NestMiddleware {
   clientRoutes = [
     { url: '/v1/users/user/:id', methods: ['GET'] }, //OBTENER USUARIO POR ID
     { url: '/v1/users/:id', methods: ['PATCH'] }, //ACTULIZAR UN USUARIO
-    { url: '/v1/users/password/:id', methods: ['GET'] }, //CAMBIAR CONTRASEÑA
+    { url: '/v1/users/password/:id', methods: ['PATCH'] }, //CAMBIAR CONTRASEÑA
     { url: '/v1/users/logout', methods: ['GET'] }, //CERRAR SESION
     
     //ACTIVOS

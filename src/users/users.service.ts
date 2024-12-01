@@ -111,12 +111,10 @@ export class UsersService {
 
     //Verificar que el usuario exista
     const userBD = await this.findOne(id);
-    if (updateUserDto.estado !== undefined) {
-      if(updateUserDto.userAdminId && updateUserDto.userAdminId.length !== 0){
+    if (updateUserDto.userAdminId && updateUserDto.userAdminId.length !== 0) {
+      if(updateUserDto.estado !== undefined){
         await this.findOneByIdAdmin(updateUserDto.userAdminId);
         userBD.estado = updateUserDto.estado;
-      }else{
-        throw new NotFoundException("Este usuario no esta permitido que realize esta acción.");
       }
     } 
 
@@ -126,7 +124,7 @@ export class UsersService {
     if(updateUserDto.email && updateUserDto.email.length !== 0){
       // Verifica que el email no esté en uso por otro usuario
       const userId = await this.findOneByEmail(updateUserDto.email);
-      if(userId !== "x"){
+      if(userId !== userBD.primaryKey){
         throw new NotFoundException('El correo electrónico ya está en uso por otro usuario.');
       }
       userBD.email = updateUserDto.email;
