@@ -123,6 +123,19 @@ export class EstacionesService {
     return estacionBD;
   }
 
+  //OBTENER ESTACIONES ACTIVAS
+  async findAllWithTrue(){
+    const command = new ScanCommand({
+      TableName: 'estaciones',
+      FilterExpression: 'estado = :estado',
+      ExpressionAttributeValues: {
+        ':estado': { BOOL: true },
+      }
+    });
+    const { Items } = await this.dynamoService.dynamoCliente.send(command);
+    return Items;
+  }
+
   // Función para extraer la IP del usuario
   private extractUserIp(request: Request): string {
     let userIp = Array.isArray(request.headers['x-forwarded-for'])

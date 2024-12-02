@@ -109,12 +109,16 @@ export class UsersService {
   //ACTUALIZAR
   async update(id: string, updateUserDto: UpdateUserDto, request: Request, res: ExpressResponse) {
 
+    // Variable para identificar si solo se actualiza el estado
+    let isStatusUpdate = false;
+
     //Verificar que el usuario exista
     const userBD = await this.findOne(id);
     if (updateUserDto.userAdminId && updateUserDto.userAdminId.length !== 0) {
       if(updateUserDto.estado !== undefined){
         await this.findOneByIdAdmin(updateUserDto.userAdminId);
         userBD.estado = updateUserDto.estado;
+        isStatusUpdate = true;
       }
     } 
 
@@ -168,7 +172,10 @@ export class UsersService {
       detail: `Usuario actualizado correctamente.`,
       ip: userIp
     });
-    res.cookie('user', JSON.stringify(userBD), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});
+
+     if(!isStatusUpdate){
+       res.cookie('user', JSON.stringify(userBD), {httpOnly: false,secure: false,sameSite: 'strict',domain: 'localhost', expires: new Date(new Date().setFullYear(9999))});   
+    }
     res.status(200).send({ message: 'Usuario actulizado correctamente.'});
   }
 
