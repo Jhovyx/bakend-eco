@@ -18,9 +18,15 @@ export class EstacionesController {
     return this.estacionesService.findAll();
   }
 
-  @Get(':id')
+  @Get('estacion/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.estacionesService.findOne(id);
+  }
+
+  //ESTACIONES ACTIVAS
+  @Get('estacion')
+  findAllTrue() {
+    return this.estacionesService.findAllWithTrue();
   }
 
   @Patch(':id')
