@@ -8,7 +8,7 @@ import { DynamodbModule } from 'src/dynamodb/dynamodb.module';
   controllers: [SesionesController],
   providers: [SesionesService],
   imports: [
-    JwtModule.register({global: true, secret: process.env.JWT_SECRET, signOptions: { expiresIn: '24h' }, }),
+    JwtModule.register({global: true, secret: process.env.JWT_SECRET, signOptions: { expiresIn: '1h' }, }),
     DynamodbModule
   ],
   exports: [SesionesService]
