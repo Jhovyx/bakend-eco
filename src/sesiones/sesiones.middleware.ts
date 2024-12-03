@@ -140,6 +140,7 @@ export class SesionesMiddleware implements NestMiddleware {
     
     //ACTIVOS
     { url: '/v1/viajes/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
+    { url: '/v1/viajes', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
 
     { url: '/v1/estaciones/estacion/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
     { url: '/v1/estaciones/estacion', methods: ['GET'] }, //ESTACIONES ACTIVAS

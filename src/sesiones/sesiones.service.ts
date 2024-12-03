@@ -76,7 +76,8 @@ export class SesionesService {
   }
 
   async refrechToken(payload: JwtPayload, user: User) {
-    const token = await this.jwtService.signAsync(payload);
+    const {exp,iat, ...res} = payload;
+    const token = await this.jwtService.signAsync(res);
     const updateCommand = new UpdateItemCommand({
       TableName: 'sesiones',
       Key: {
