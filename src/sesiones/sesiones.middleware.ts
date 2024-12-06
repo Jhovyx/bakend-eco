@@ -115,16 +115,18 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/users/password/:id', methods: ['PATCH'] }, //CAMBIAR CONTRASEÑA
     
     { url: '/v1/viajes', methods: ['GET', 'POST'] }, //OBTENER VIAJES, CREAR
-    { url: '/v1/viajes/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
+    { url: '/v1/viajes/viaje/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
+    { url: '/v1/viajes/viajestrue', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
     { url: '/v1/viajes/:id', methods: ['PATCH'] }, //ACTULIZAR UN VIAJE
 
     { url: '/v1/estaciones', methods: ['GET', 'POST'] }, //OBTENER ESTACIONES Y CREAR
     { url: '/v1/estaciones/estacion/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
-    { url: '/v1/estaciones/estacion/:id', methods: ['PATCH'] }, //ACTULIZAR ESTACION POR ID
-    { url: '/v1/estaciones/estacion', methods: ['GET'] }, //ESTACIONES ACTIVAS
+    { url: '/v1/estaciones/estacionestrue', methods: ['GET'] }, //ESTACIONES ACTIVAS
+    { url: '/v1/estaciones/:id', methods: ['PATCH'] }, //ACTULIZAR ESTACION POR ID
 
     { url: '/v1/buses', methods: ['GET', 'POST'] }, //OBTENER BUSES Y CREAR
-    { url: '/v1/buses/:id', methods: ['GET'] }, //OBTENER BUS POR ID
+    { url: '/v1/buses/busestrue', methods: ['GET'] }, //OBTENER BUS activos
+    { url: '/v1/buses/bus/:id', methods: ['GET'] }, //OBTENER BUS POR ID
     { url: '/v1/buses/:id', methods: ['PATCH'] }, //ACTULIZAR BUS POR ID
 
     { url: '/v1/activities', methods: ['GET'] }, //OBTENER ACTIVIDADES
@@ -139,13 +141,14 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/users/logout', methods: ['GET'] }, //CERRAR SESION
     
     //ACTIVOS
-    { url: '/v1/viajes/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
-    { url: '/v1/viajes', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
+    { url: '/v1/viajes/viaje/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
+    { url: '/v1/viajes/viajestrue', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
 
     { url: '/v1/estaciones/estacion/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
-    { url: '/v1/estaciones/estacion', methods: ['GET'] }, //ESTACIONES ACTIVAS
+    { url: '/v1/estaciones/estacionestrue', methods: ['GET'] }, //ESTACIONES ACTIVAS
 
-    { url: '/v1/buses/:id', methods: ['GET'] }, //OBTENER BUS POR ID
+    { url: '/v1/buses/busestrue', methods: ['GET'] }, //OBTENER BUS activos
+    { url: '/v1/buses/bus/:id', methods: ['GET'] }, //OBTENER BUS POR ID
   ];
 
   noAuthRoutes = [
@@ -153,7 +156,11 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/users/login', methods: ['POST'] }, //LOGIN
 
     //ACTIVOS
-    { url: '/v1/viajes', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
+    { url: '/v1/viajes/viaje/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
+    { url: '/v1/viajes/viajestrue', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
+
+    { url: '/v1/estaciones/estacion/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
+    { url: '/v1/estaciones/estacionestrue', methods: ['GET'] }, //ESTACIONES ACTIVAS
   ];
 
 }

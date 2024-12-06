@@ -24,9 +24,9 @@ export class EstacionesController {
   }
 
   //ESTACIONES ACTIVAS
-  @Get('estacion')
+  @Get('estacionestrue')
   findAllTrue() {
-    return this.estacionesService.findAllWithTrue();
+    return this.estacionesService.findAllTrue();
   }
 
   @Patch(':id')
