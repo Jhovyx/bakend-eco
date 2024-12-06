@@ -18,7 +18,13 @@ export class BusesController {
     return this.busesService.findAll();
   }
 
-  @Get(':id')
+  //BUSES ACTIVOS
+  @Get('busestrue')
+  findAllTrue() {
+    return this.busesService.findAllTrue();
+  }
+
+  @Get('bus/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.busesService.findOne(id);
   }

@@ -8,7 +8,6 @@ import { Estacion } from './entities/estacione.entity';
 import { PutCommand, ScanCommand, GetCommand} from '@aws-sdk/lib-dynamodb';
 import { v4 as uuid } from 'uuid';
 import { Request } from 'express';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 @Injectable()
 export class EstacionesService {
@@ -124,12 +123,12 @@ export class EstacionesService {
   }
 
   //OBTENER ESTACIONES ACTIVAS
-  async findAllWithTrue(){
+  async findAllTrue(){
     const command = new ScanCommand({
       TableName: 'estaciones',
       FilterExpression: 'estado = :estado',
       ExpressionAttributeValues: {
-        ':estado': { BOOL: true },
+        ':estado': true,
       }
     });
     const { Items } = await this.dynamoService.dynamoCliente.send(command);

@@ -18,7 +18,12 @@ export class ViajesController {
     return this.viajesService.findAll();
   }
 
-  @Get(':id')
+  @Get('viajestrue')
+  findAllTrue() {
+    return this.viajesService.findAllTrue();
+  }
+
+  @Get('viaje/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.viajesService.findOne(id);
   }

@@ -2,10 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { Activity } from './entities/activity.entity';
 import { v4 as uuid } from 'uuid';
-import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamodbService } from 'src/dynamodb/dynamodb.service';
-import { ScanCommand } from '@aws-sdk/client-dynamodb';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 @Injectable()
 export class ActivitiesService {
@@ -42,7 +40,7 @@ export class ActivitiesService {
     });
     const {Items} = await this.dynamodbService.dynamoCliente.send(command);
 
-    return Items.map(item => unmarshall(item));
+    return Items;
   }
 
   //OBTENER PO ID

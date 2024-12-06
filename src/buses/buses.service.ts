@@ -5,11 +5,9 @@ import { Bus } from './entities/bus.entity';
 import { v4 as uuid } from 'uuid';
 import { DynamodbService } from 'src/dynamodb/dynamodb.service';
 import { ActivitiesService } from 'src/activities/activities.service';
-import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { GetCommand, PutCommand , ScanCommand} from '@aws-sdk/lib-dynamodb';
 import { Request } from 'express';
 import { UsersService } from 'src/users/users.service';
-import { ScanCommand } from '@aws-sdk/client-dynamodb';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 @Injectable()
 export class BusesService {
@@ -66,7 +64,7 @@ export class BusesService {
     });
     const { Items } = await this.dynamoService.dynamoCliente.send(command);
 
-    return Items.map(item => unmarshall(item));
+    return Items;
   }
 
   //OBTENER POR ID
@@ -86,9 +84,7 @@ export class BusesService {
   //ACTULIZAR
   async update(id: string, updateBusDto: UpdateBusDto, request: Request) {
     const {userAdminId,capacidad,modelo,placa,estado} = updateBusDto;
-    if(!capacidad && !modelo && !placa)
-      throw new NotFoundException('No hay datos para actilizar.')
-    
+
     //verificar si es un admintrador
     await this.usersService.findOneByIdAdmin(userAdminId);
 
@@ -122,9 +118,21 @@ export class BusesService {
       ip: userIp,
     });
     
-    
     //retornar el bus actualizado
     return busBD
+  }
+
+  //OBTENER BUSES ACTIVOS
+  async findAllTrue(){
+    const command = new ScanCommand({
+      TableName: 'buses',
+      FilterExpression: 'estado = :estado',
+      ExpressionAttributeValues: {
+        ':estado': true,
+      }
+    });
+    const { Items } = await this.dynamoService.dynamoCliente.send(command);
+    return Items;
   }
 
   // Función para extraer la IP del usuario

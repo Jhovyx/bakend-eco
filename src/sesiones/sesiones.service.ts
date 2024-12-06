@@ -107,7 +107,7 @@ export class SesionesService {
       },
     });
     const {Items} = await this.dynamoService.dynamoCliente.send(command);
-
+    
     // Si no se encuentra la sesion
     if (!Items || Items.length === 0)return "x";
 
@@ -133,7 +133,7 @@ export class SesionesService {
         },
       });
       const { Items } = await this.dynamoService.dynamoCliente.send(command);
-      
+      console.log(Items)
       if (!Items || Items.length === 0)return false;
       
       const session = Items[0]; // Asumimos que el token es único
