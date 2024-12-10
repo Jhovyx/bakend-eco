@@ -17,8 +17,4 @@ export class UpdateEstacioneDto {
     @MinLength(1)
     @IsUUID()
     readonly userAdminId: string;
-
-    @IsOptional()
-    @IsBoolean()
-    readonly estado: boolean;
 }

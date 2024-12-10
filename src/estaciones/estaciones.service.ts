@@ -85,7 +85,7 @@ export class EstacionesService {
 
   //ACTUALIZAR
   async update(id: string, updateEstacioneDto: UpdateEstacioneDto, request: Request) {
-    const {nombre,userAdminId,ubicacion,estado} = updateEstacioneDto;
+    const {nombre,userAdminId,ubicacion} = updateEstacioneDto;
 
     //verificar si es un administrador
     await this.usersService.findOneByIdAdmin(userAdminId);
@@ -96,7 +96,6 @@ export class EstacionesService {
     //actulizacion de campos
     if(nombre && nombre.length !== 0) estacionBD.nombre = nombre.toUpperCase();
     if(ubicacion && ubicacion.length !== 0) estacionBD.ubicacion = ubicacion;
-    if(estado !== undefined) estacionBD.estado = estado;
     estacionBD.updatedAt = new Date().getTime();
 
     //preparacion de la consulta
@@ -120,19 +119,6 @@ export class EstacionesService {
     });
 
     return estacionBD;
-  }
-
-  //OBTENER ESTACIONES ACTIVAS
-  async findAllTrue(){
-    const command = new ScanCommand({
-      TableName: 'estaciones',
-      FilterExpression: 'estado = :estado',
-      ExpressionAttributeValues: {
-        ':estado': true,
-      }
-    });
-    const { Items } = await this.dynamoService.dynamoCliente.send(command);
-    return Items;
   }
 
   // Función para extraer la IP del usuario
