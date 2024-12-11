@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateAsientoDto } from './dto/create-asiento.dto';
-import { UpdateAsientoDto } from './dto/update-asiento.dto';
 import { UsersService } from 'src/users/users.service';
 import { DynamodbService } from 'src/dynamodb/dynamodb.service';
 import { Asiento, EstadoAsiento } from './entities/asiento.entity';
 import { v4 as uuid } from 'uuid';
 import { GetCommand, PutCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { AsientosGateway } from './asientos.gateway';
+import { UpdateAsientoDto } from './dto/update-asiento.dto';
 
 
 @Injectable()
@@ -20,8 +20,45 @@ export class AsientosService implements OnModuleInit {
     private readonly asientosGateway: AsientosGateway
   ){}
 
-  //para liberar asientos falta
+  //para liberar asientos
   onModuleInit() {
+    this.interval = setInterval(async () => {
+      const now = new Date().getTime();
+  
+      // Consultar solo los asientos con estado SELECCIONADO
+      const queryCommand = new QueryCommand({
+        TableName: 'asientos',
+        IndexName: 'estado-index', // Nombre del índice creado
+        KeyConditionExpression: '#estado = :estado AND #timestampSeleccion <= :timestampLímite',
+        ExpressionAttributeNames: {
+          '#estado': 'estado',
+          '#timestampSeleccion': 'timestampSeleccion',
+        },
+        ExpressionAttributeValues: {
+          ':estado': EstadoAsiento.SELECCIONADO,
+          ':timestampLímite': now - 5 * 60 * 1000, // Hace 5 minutos
+        },
+      });
+  
+      const { Items } = await this.dynamoService.dynamoCliente.send(queryCommand);
+  
+      for (const item  of Items || []) {
+        const asiento: Asiento = item as Asiento;
+
+        // Actualizar el estado del asiento a DISPONIBLE
+        asiento.estado = EstadoAsiento.DISPONIBLE;
+        asiento.reservadoPor = null;
+        asiento.updatedAt = new Date().getTime();
+  
+        const updateCommand = new PutCommand({
+          TableName: 'asientos',
+          Item: { ...asiento },
+        });
+  
+        await this.dynamoService.dynamoCliente.send(updateCommand);
+        this.asientosGateway.emitAsientoActualizado(asiento);
+      }
+    }, 5 * 60 * 1000); //revisa cada 5 minutos y si pasa mas de 5minitos uno lo libera 
   }
 
   async create(createAsientoDto: CreateAsientoDto) {
@@ -71,41 +108,6 @@ export class AsientosService implements OnModuleInit {
     return Item as Asiento;
   }
 
-  
-  async update(id: string, updateAsientoDto: UpdateAsientoDto) {
-    const {estado,reservadoPor} = updateAsientoDto;
-
-    //verificar si existe ese asiento
-    const asientoBD = await this.findOne(id);
-    const user = await this.usersService.findOne(reservadoPor);
-    if(user.estado !== true)
-      throw new NotFoundException(`El usuario no puede realizar esta acción".`);
-
-    if (estado && asientoBD.estado === estado)
-      throw new NotFoundException(`El asiento ya está en el estado "${estado}".`);
-    
-    if (reservadoPor && asientoBD.reservadoPor === reservadoPor)
-      throw new NotFoundException(`El asiento ya está reservado por el usuario "${reservadoPor}".`);
-
-    //actualizacion de campos
-    asientoBD.updatedAt = new Date().getTime();
-    asientoBD.timestampSeleccion = new Date().getTime();
-    if(estado) asientoBD.estado = estado;
-    if (estado) asientoBD.estado = estado;
-    if (reservadoPor) asientoBD.reservadoPor = reservadoPor;
-
-    //preparacion de la consulta
-    const comand = new  PutCommand({
-      TableName: 'asientos',
-      Item: {
-        ...asientoBD
-      }
-    });         
-    await this.dynamoService.dynamoCliente.send(comand)
-    this.asientosGateway.emitAsientoActualizado(asientoBD);
-    return asientoBD
-  }
-
   async findAsientosByBus(idBus: string) {
     // Prepara el comando QueryCommand para buscar asientos por el idBus
     const queryCommand = new QueryCommand({
@@ -125,5 +127,45 @@ export class AsientosService implements OnModuleInit {
   
     // Retorna los asientos encontrados
     return Items;
+  }
+
+  async selectAsiento(id: string, updateAsientoDto: UpdateAsientoDto) {
+    const asiento = await this.findOne(id);
+
+    if (asiento.estado !== EstadoAsiento.DISPONIBLE)
+      throw new NotFoundException('El asiento no está disponible para seleccionar.');
+
+    asiento.estado = EstadoAsiento.SELECCIONADO;
+    asiento.reservadoPor = updateAsientoDto.reservadoPor;
+    asiento.timestampSeleccion = new Date().getTime();
+    asiento.updatedAt = new Date().getTime();
+
+    const command = new PutCommand({
+      TableName: 'asientos',
+      Item: { ...asiento },
+    });
+    await this.dynamoService.dynamoCliente.send(command);
+
+    this.asientosGateway.emitAsientoActualizado(asiento);
+    return asiento;
+  }
+
+  async reserveAsiento(id: string, updateAsientoDto: UpdateAsientoDto) {
+    const asiento = await this.findOne(id);
+
+    if (asiento.estado !== EstadoAsiento.SELECCIONADO || asiento.reservadoPor !== updateAsientoDto.reservadoPor)
+      throw new NotFoundException('El asiento no está seleccionado por este usuario o ya está reservado.');
+
+    asiento.estado = EstadoAsiento.RESERVADO;
+    asiento.updatedAt = new Date().getTime();
+
+    const command = new PutCommand({
+      TableName: 'asientos',
+      Item: { ...asiento },
+    });
+    await this.dynamoService.dynamoCliente.send(command);
+
+    this.asientosGateway.emitAsientoActualizado(asiento);
+    return asiento;
   }
 }
