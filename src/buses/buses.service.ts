@@ -49,7 +49,7 @@ export class BusesService {
 
     //crear asientos
     for(let numero = 1; numero <= newBus.capacidad; numero++){
-      await this.asientosService.create({numero, idBus: newBus.primaryKey, userAdminId, estado: EstadoAsiento.DISPONIBLE})
+      await this.asientosService.create({numero, idBus: newBus.primaryKey, userAdminId})
     }
 
     // Obtiene la IP del usuario de forma segura
