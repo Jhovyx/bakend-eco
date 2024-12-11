@@ -119,6 +119,9 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/viajes/viajestrue', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
     { url: '/v1/viajes/:id', methods: ['PATCH'] }, //ACTULIZAR UN VIAJE
 
+    { url: '/v1/asientos', methods: ['GET', 'POST'] }, //OBTENER asientos, CREAR
+    { url: '/v1/asientos/bus/:id', methods: ['GET'] }, //OBTENER asientos, por bus
+
     { url: '/v1/estaciones', methods: ['GET', 'POST'] }, //OBTENER ESTACIONES Y CREAR
     { url: '/v1/estaciones/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
     { url: '/v1/estaciones/:id', methods: ['PATCH'] }, //ACTULIZAR ESTACION POR ID

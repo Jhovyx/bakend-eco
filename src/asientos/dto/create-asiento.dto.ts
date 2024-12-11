@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsUUID, Min, MinLength, IsEnum, IsOptional, IsInt, Max } from 'class-validator';
+import { IsNumber, IsString, IsUUID, Min, MinLength, IsEnum, IsOptional, Max } from 'class-validator';
 import { EstadoAsiento } from '../entities/asiento.entity';
 
 export class CreateAsientoDto {

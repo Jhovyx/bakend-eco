@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateAsientoDto } from './dto/create-asiento.dto';
 import { UpdateAsientoDto } from './dto/update-asiento.dto';
-import { BusesService } from 'src/buses/buses.service';
 import { UsersService } from 'src/users/users.service';
 import { DynamodbService } from 'src/dynamodb/dynamodb.service';
 import { Asiento, EstadoAsiento } from './entities/asiento.entity';
@@ -18,7 +17,6 @@ export class AsientosService implements OnModuleInit {
   constructor(
     private readonly dynamoService: DynamodbService,
     private readonly usersService: UsersService,
-    private readonly busesService: BusesService,
     private readonly asientosGateway: AsientosGateway
   ){}
 
@@ -31,12 +29,6 @@ export class AsientosService implements OnModuleInit {
 
     //verificar si es un administrador
     await this.usersService.findOneByIdAdmin(userAdminId);
-
-    //verificar si el bus existe
-    await this.busesService.findOne(idBus);
-
-    //verificar si el numero de asiento ya existe en el bus
-    await this.verifyAsientoAndBus(idBus,numero)
 
     //crear el nuevo objeto
     const newAsiento: Asiento = {
@@ -114,24 +106,24 @@ export class AsientosService implements OnModuleInit {
     return asientoBD
   }
 
-  // verificar si el asiento no existe en el bus
-  async verifyAsientoAndBus(idBus: string, numero: number){
+  async findAsientosByBus(idBus: string) {
+    // Prepara el comando QueryCommand para buscar asientos por el idBus
     const queryCommand = new QueryCommand({
       TableName: 'asientos',
       IndexName: 'idBus-index',
-      KeyConditionExpression: '#idBus = :idBus AND #numero = :numero',
+      KeyConditionExpression: '#idBus = :idBus',
       ExpressionAttributeNames: {
         '#idBus': 'idBus',
-        '#numero': 'numero', 
       },
       ExpressionAttributeValues: {
-        ':idBus': { S: idBus },
-        ':numero': { N: numero },
-      }
+        ':idBus': idBus,
+      },
     });
+  
+    // Ejecuta la consulta en DynamoDB
     const { Items } = await this.dynamoService.dynamoCliente.send(queryCommand);
-    
-    if (Items && Items.length > 0)
-      throw new Error(`El asiento número ${numero} ya existe en el bus ${idBus}`);
+  
+    // Retorna los asientos encontrados
+    return Items;
   }
 }

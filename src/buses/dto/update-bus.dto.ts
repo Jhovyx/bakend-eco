@@ -8,11 +8,6 @@ export class UpdateBusDto {
     readonly placa: string;
     
     @IsOptional()
-    @IsNumber()
-    @Min(1)
-    readonly capacidad: number;
-
-    @IsOptional()
     @IsString()
     @MinLength(1)
     readonly modelo: string;
