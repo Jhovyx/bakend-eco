@@ -120,33 +120,6 @@ export class SesionesService {
     return 'x';
   }
 
-  async verifyToken(access_token: string) {
-    try {
-      await this.jwtService.verifyAsync(access_token,{secret: process.env.JWT_SECRET})
-      
-      const command = new QueryCommand({
-        TableName: 'sesiones',
-        IndexName: 'token-index', // GSI para buscar por token
-        KeyConditionExpression: 'token = :token',
-        ExpressionAttributeValues: {
-          ':token': { S: access_token },
-        },
-      });
-      const { Items } = await this.dynamoService.dynamoCliente.send(command);
-      console.log(Items)
-      if (!Items || Items.length === 0)return false;
-      
-      const session = Items[0]; // Asumimos que el token es único
-      
-      // Verificar si la sesión está activa
-      if (!session.estado.BOOL) return false; // Sesión inactiva
-      
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
   //cerrar sesion
   async deactivateSession(access_token: string) {
     try {

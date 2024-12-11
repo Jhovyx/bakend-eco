@@ -18,20 +18,13 @@ export class EstacionesController {
     return this.estacionesService.findAll();
   }
 
-  @Get('estacion/:id')
+  @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.estacionesService.findOne(id);
-  }
-
-  //ESTACIONES ACTIVAS
-  @Get('estacionestrue')
-  findAllTrue() {
-    return this.estacionesService.findAllTrue();
   }
 
   @Patch(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateEstacioneDto: UpdateEstacioneDto, @Req() request: Request) {
     return this.estacionesService.update(id, updateEstacioneDto,request);
   }
-
 }

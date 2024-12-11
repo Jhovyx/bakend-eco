@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { AsientosService } from './asientos.service';
 import { CreateAsientoDto } from './dto/create-asiento.dto';
 import { UpdateAsientoDto } from './dto/update-asiento.dto';
@@ -17,18 +17,18 @@ export class AsientosController {
     return this.asientosService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.asientosService.findOne(+id);
+  @Get('bus/:id')
+  findAllBusId(@Param('id', ParseUUIDPipe) id: string) {
+    return this.asientosService.findAsientosByBus(id);
+  }
+
+  @Get('asiento/:id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.asientosService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAsientoDto: UpdateAsientoDto) {
-    return this.asientosService.update(+id, updateAsientoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.asientosService.remove(+id);
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateAsientoDto: UpdateAsientoDto) {
+    return this.asientosService.update(id, updateAsientoDto);
   }
 }

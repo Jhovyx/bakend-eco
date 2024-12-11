@@ -6,10 +6,6 @@ export class CreateBusDto {
     @MinLength(1)
     readonly placa: string;
     
-    @IsNumber()
-    @Min(1)
-    readonly capacidad: number;
-
     @IsString()
     @MinLength(1)
     readonly modelo: string;

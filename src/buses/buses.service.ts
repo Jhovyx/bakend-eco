@@ -8,6 +8,8 @@ import { ActivitiesService } from 'src/activities/activities.service';
 import { GetCommand, PutCommand , ScanCommand} from '@aws-sdk/lib-dynamodb';
 import { Request } from 'express';
 import { UsersService } from 'src/users/users.service';
+import { AsientosService } from '../asientos/asientos.service';
+import { EstadoAsiento } from 'src/asientos/entities/asiento.entity';
 
 @Injectable()
 export class BusesService {
@@ -15,7 +17,8 @@ export class BusesService {
   constructor(
     private readonly dynamoService: DynamodbService,
     private readonly usersService: UsersService,
-    private readonly activitiesService: ActivitiesService
+    private readonly activitiesService: ActivitiesService,
+    private readonly asientosService: AsientosService
   ){}
 
   //CREAR
@@ -26,9 +29,10 @@ export class BusesService {
     await this.usersService.findOneByIdAdmin(userAdminId);
 
     //crear el nuevo objeto
-    const newBus: Bus = {
+    let newBus: Bus = {
       primaryKey: uuid(),
       ...createBusDto,
+      capacidad: 40,
       createdAt: new Date().getTime(),
       updatedAt: null,
       estado: true,
@@ -42,6 +46,11 @@ export class BusesService {
       }
     })
     await this.dynamoService.dynamoCliente.send(command);
+
+    //crear asientos
+    for(let numero = 1; numero <= newBus.capacidad; numero++){
+      await this.asientosService.create({numero, idBus: newBus.primaryKey, userAdminId, estado: EstadoAsiento.DISPONIBLE})
+    }
 
     // Obtiene la IP del usuario de forma segura
     const userIp = this.extractUserIp(request);
@@ -83,7 +92,7 @@ export class BusesService {
 
   //ACTULIZAR
   async update(id: string, updateBusDto: UpdateBusDto, request: Request) {
-    const {userAdminId,capacidad,modelo,placa,estado} = updateBusDto;
+    const {userAdminId,modelo,placa,estado} = updateBusDto;
 
     //verificar si es un admintrador
     await this.usersService.findOneByIdAdmin(userAdminId);
@@ -93,7 +102,6 @@ export class BusesService {
 
     //actualizacion de campos
     busBD.updatedAt = new Date().getTime();
-    if(capacidad) busBD.capacidad = capacidad;
     if(modelo) busBD.modelo = modelo;
     if(placa) busBD.placa = placa;
     if(estado !== undefined) busBD.estado = estado;

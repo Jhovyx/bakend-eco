@@ -119,9 +119,11 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/viajes/viajestrue', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
     { url: '/v1/viajes/:id', methods: ['PATCH'] }, //ACTULIZAR UN VIAJE
 
+    { url: '/v1/asientos', methods: ['GET', 'POST'] }, //OBTENER asientos, CREAR
+    { url: '/v1/asientos/bus/:id', methods: ['GET'] }, //OBTENER asientos, por bus
+
     { url: '/v1/estaciones', methods: ['GET', 'POST'] }, //OBTENER ESTACIONES Y CREAR
-    { url: '/v1/estaciones/estacion/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
-    { url: '/v1/estaciones/estacionestrue', methods: ['GET'] }, //ESTACIONES ACTIVAS
+    { url: '/v1/estaciones/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
     { url: '/v1/estaciones/:id', methods: ['PATCH'] }, //ACTULIZAR ESTACION POR ID
 
     { url: '/v1/buses', methods: ['GET', 'POST'] }, //OBTENER BUSES Y CREAR
@@ -144,8 +146,8 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/viajes/viaje/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
     { url: '/v1/viajes/viajestrue', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
 
-    { url: '/v1/estaciones/estacion/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
-    { url: '/v1/estaciones/estacionestrue', methods: ['GET'] }, //ESTACIONES ACTIVAS
+    { url: '/v1/estaciones/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
+    { url: '/v1/estaciones', methods: ['GET'] }, //ESTACIONES
 
     { url: '/v1/buses/busestrue', methods: ['GET'] }, //OBTENER BUS activos
     { url: '/v1/buses/bus/:id', methods: ['GET'] }, //OBTENER BUS POR ID
@@ -159,8 +161,8 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/viajes/viaje/:id', methods: ['GET'] }, //OBTENER VIAJE POR ID
     { url: '/v1/viajes/viajestrue', methods: ['GET'] }, //OBTENER VIAJES ACTIVOS
 
-    { url: '/v1/estaciones/estacion/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
-    { url: '/v1/estaciones/estacionestrue', methods: ['GET'] }, //ESTACIONES ACTIVAS
+    { url: '/v1/estaciones/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
+    { url: '/v1/estaciones', methods: ['GET'] }, //ESTACIONES
   ];
 
 }

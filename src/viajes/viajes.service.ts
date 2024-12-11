@@ -35,13 +35,9 @@ export class ViajesService {
        throw new NotFoundException('El bus está activo.');
     
     // Verificar si las estaciones existen
-    const estacionOrigen = await this.estacionesService.findOne(idEstacionOrigen);
-    if (estacionOrigen.estado !== true)
-        throw new NotFoundException('La estación de origen no está activa.');
+    await this.estacionesService.findOne(idEstacionOrigen);
 
-    const estacionDestino = await this.estacionesService.findOne(idEstacionDestino);
-    if (estacionDestino.estado !== true)
-        throw new NotFoundException('La estación de destino no existe o no está activa.');
+    await this.estacionesService.findOne(idEstacionDestino);
     
     //creacion del nuevo viaje
     const newViaje: Viaje = {
