@@ -19,16 +19,11 @@ export class AsientosController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.asientosService.findOne(+id);
+    return this.asientosService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAsientoDto: UpdateAsientoDto) {
-    return this.asientosService.update(+id, updateAsientoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.asientosService.remove(+id);
+    return this.asientosService.update(id, updateAsientoDto);
   }
 }
