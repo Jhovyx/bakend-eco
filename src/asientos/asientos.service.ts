@@ -29,40 +29,37 @@ export class AsientosService implements OnModuleInit {
       const queryCommand = new QueryCommand({
         TableName: 'asientos',
         IndexName: 'estado-index', // Nombre del índice creado
-        KeyConditionExpression: '#estado = :estado AND #timestampSeleccion <= :timestampLímite',
+        KeyConditionExpression: '#estado = :estado',
         ExpressionAttributeNames: {
-          '#estado': 'estado',
-          '#timestampSeleccion': 'timestampSeleccion',
-        },
+          '#estado': 'estado',        },
         ExpressionAttributeValues: {
-          ':estado': EstadoAsiento.SELECCIONADO,
-          ':timestampLímite': now - 5 * 60 * 1000, // Hace 5 minutos
-        },
+          ':estado': EstadoAsiento.SELECCIONADO,        },
       });
   
       const { Items } = await this.dynamoService.dynamoCliente.send(queryCommand);
+      if(Items && Items.length !== 0){
+        for (const item  of Items) {
+          const asiento: Asiento = item as Asiento;
   
-      for (const item  of Items || []) {
-        const asiento: Asiento = item as Asiento;
-
-        // Actualizar el estado del asiento a DISPONIBLE
-        asiento.estado = EstadoAsiento.DISPONIBLE;
-        asiento.reservadoPor = null;
-        asiento.updatedAt = new Date().getTime();
-  
-        const updateCommand = new PutCommand({
-          TableName: 'asientos',
-          Item: { ...asiento },
-        });
-  
-        await this.dynamoService.dynamoCliente.send(updateCommand);
-        this.asientosGateway.emitAsientoActualizado(asiento);
+          // Actualizar el estado del asiento a DISPONIBLE
+          asiento.estado = EstadoAsiento.DISPONIBLE;
+          asiento.reservadoPor = null;
+          asiento.updatedAt = new Date().getTime();
+    
+          const updateCommand = new PutCommand({
+            TableName: 'asientos',
+            Item: { ...asiento },
+          });
+    
+          await this.dynamoService.dynamoCliente.send(updateCommand);
+          this.asientosGateway.emitAsientoActualizado(asiento);
+        }
       }
     }, 5 * 60 * 1000); //revisa cada 5 minutos y si pasa mas de 5minitos uno lo libera 
   }
 
   async create(createAsientoDto: CreateAsientoDto) {
-    const {userAdminId,idBus,numero} = createAsientoDto;
+    const {userAdminId} = createAsientoDto;
 
     //verificar si es un administrador
     await this.usersService.findOneByIdAdmin(userAdminId);
