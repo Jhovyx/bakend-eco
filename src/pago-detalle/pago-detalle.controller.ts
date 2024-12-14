@@ -1,4 +1,3 @@
-
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { PagoDetalleService } from './pago-detalle.service';
 import { CreatePagoDetalleDto } from './dto/create-pago-detalle.dto';

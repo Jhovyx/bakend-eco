@@ -1,4 +1,3 @@
-
 import { IsString, IsNotEmpty, IsDateString, Length } from 'class-validator';
 
 export class CreatePagoDetalleDto {
