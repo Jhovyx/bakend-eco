@@ -137,6 +137,12 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/activities', methods: ['GET'] }, //OBTENER ACTIVIDADES
     { url: '/v1/activities/:id', methods: ['GET'] }, //OBTENER ACTIVIDADES POR ID
 
+    { url: '/v1/buses', methods: ['GET', 'POST'] }, //OBTENER BUSES Y CREAR
+
+    { url: '/v1/reservas', methods: ['GET', 'POST'] },
+    { url: '/v1/reservas/reserva/:id', methods: ['GET'] },
+    { url: '/v1/reservas/user/:id', methods: ['GET'] },
+    { url: '/v1/reservas/:id',  metohds: ['PATCH']},
   ];
 
   clientRoutes = [
@@ -161,6 +167,10 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/asientos/seleccion/:id', methods: ['PATCH'] }, //seleccionar asientos, por id
     { url: '/v1/asientos/deseleccionar/:id', methods: ['PATCH'] }, //desseleccionar asientos, por id
 
+    { url: '/v1/reservas', methods: ['GET', 'POST'] },
+    { url: '/v1/reservas/reserva/:id', methods: ['GET'] },
+    { url: '/v1/reservas/user/:id', methods: ['GET'] },
+    { url: '/v1/reservas/:id',  metohds: ['PATCH']},
   ];
 
   noAuthRoutes = [
