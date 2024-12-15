@@ -122,7 +122,8 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/asientos', methods: ['GET'] }, //OBTENER asientos, CREAR
     { url: '/v1/asientos/bus/:id', methods: ['GET'] }, //OBTENER asientos, por bus
     { url: '/v1/asientos/asiento/:id', methods: ['GET'] }, //OBTENER asientos, por id
-    { url: '/v1/asientos/:id', methods: ['PATCH'] }, //seleccionar asientos, por id
+    { url: '/v1/asientos/seleccion/:id', methods: ['PATCH'] }, //seleccionar asientos, por id
+    { url: '/v1/asientos/deseleccionar/:id', methods: ['PATCH'] }, //desseleccionar asientos, por id
 
     { url: '/v1/estaciones', methods: ['GET', 'POST'] }, //OBTENER ESTACIONES Y CREAR
     { url: '/v1/estaciones/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
@@ -157,7 +158,8 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/asientos', methods: ['GET'] }, //OBTENER asientos, CREAR
     { url: '/v1/asientos/bus/:id', methods: ['GET'] }, //OBTENER asientos, por bus
     { url: '/v1/asientos/asiento/:id', methods: ['GET'] }, //OBTENER asientos, por id
-    { url: '/v1/asientos/:id', methods: ['PATCH'] }, //seleccionar asientos, por id
+    { url: '/v1/asientos/seleccion/:id', methods: ['PATCH'] }, //seleccionar asientos, por id
+    { url: '/v1/asientos/deseleccionar/:id', methods: ['PATCH'] }, //desseleccionar asientos, por id
 
   ];
 
@@ -172,10 +174,11 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/estaciones/:id', methods: ['GET'] }, //OBTENER ESTACION POR ID
     { url: '/v1/estaciones', methods: ['GET'] }, //ESTACIONES
 
+    { url: '/v1/buses/bus/:id', methods: ['GET'] }, //OBTENER BUS POR ID
+
     { url: '/v1/asientos', methods: ['GET'] }, //OBTENER asientos, CREAR
     { url: '/v1/asientos/bus/:id', methods: ['GET'] }, //OBTENER asientos, por bus
     { url: '/v1/asientos/asiento/:id', methods: ['GET'] }, //OBTENER asientos, por id
-    { url: '/v1/asientos/:id', methods: ['PATCH'] }, //seleccionar asientos, por id
 
   ];
 
