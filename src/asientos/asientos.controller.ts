@@ -22,8 +22,13 @@ export class AsientosController {
     return this.asientosService.findOne(id);
   }
 
-  @Patch(':id')//seleccion de asiento
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateAsientoDto: UpdateAsientoDto) {
+  @Patch('seleccion/:id')//seleccion de asiento
+  seleccionar(@Param('id', ParseUUIDPipe) id: string, @Body() updateAsientoDto: UpdateAsientoDto) {
     return this.asientosService.selectAsiento(id, updateAsientoDto);
+  }
+
+  @Patch('deseleccionar/:id') // Deselección de asiento
+  deseleccionar(@Param('id', ParseUUIDPipe) id: string, @Body() updateAsientoDto: UpdateAsientoDto) {
+    return this.asientosService.deseleccionarAsiento(id, updateAsientoDto);
   }
 }

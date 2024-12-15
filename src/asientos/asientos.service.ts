@@ -44,6 +44,7 @@ export class AsientosService implements OnModuleInit {
           // Actualizar el estado del asiento a DISPONIBLE
           asiento.estado = EstadoAsiento.DISPONIBLE;
           asiento.reservadoPor = null;
+	  asiento.timestampSeleccion = null;
           asiento.updatedAt = new Date().getTime();
     
           const updateCommand = new PutCommand({
@@ -55,7 +56,7 @@ export class AsientosService implements OnModuleInit {
           this.asientosGateway.emitAsientoActualizado(asiento);
         }
       }
-    }, 5 * 60 * 1000); //revisa cada 5 minutos y si pasa mas de 5minitos uno lo libera 
+    }, 10 * 60 * 1000); //revisa cada 5 minutos y si pasa mas de 5minitos uno lo libera 
   }
 
   async create(createAsientoDto: CreateAsientoDto) {
@@ -120,8 +121,8 @@ export class AsientosService implements OnModuleInit {
     });
   
     // Ejecuta la consulta en DynamoDB
-    const { Items } = await this.dynamoService.dynamoCliente.send(queryCommand);
-  
+    const { Items }= await this.dynamoService.dynamoCliente.send(queryCommand);
+
     // Retorna los asientos encontrados
     return Items;
   }
@@ -146,6 +147,32 @@ export class AsientosService implements OnModuleInit {
     this.asientosGateway.emitAsientoActualizado(asiento);
     return asiento;
   }
+
+async deseleccionarAsiento(id: string, updateAsientoDto: UpdateAsientoDto) {
+  const asiento = await this.findOne(id);
+
+  if (asiento.estado !== EstadoAsiento.SELECCIONADO)
+    throw new NotFoundException('El asiento no está seleccionado para deseleccionar.');
+
+if (asiento.reservadoPor !== updateAsientoDto.reservadoPor)
+throw new NotFoundException('Solo la persona que seleccionó el asiento puede deseleccionarlo.');
+
+  asiento.estado = EstadoAsiento.DISPONIBLE;
+  asiento.reservadoPor = null;  // El campo reservadoPor se borra al deseleccionar
+  asiento.timestampSeleccion = null;  // Se limpia el timestamp
+  asiento.updatedAt = new Date().getTime();
+
+  const command = new PutCommand({
+    TableName: 'asientos',
+    Item: { ...asiento },
+  });
+  await this.dynamoService.dynamoCliente.send(command);
+
+  this.asientosGateway.emitAsientoActualizado(asiento);
+
+  return asiento;
+}
+
 
   async reserveAsiento(id: string, updateAsientoDto: UpdateAsientoDto) {
     const asiento = await this.findOne(id);
