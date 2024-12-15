@@ -9,7 +9,6 @@ import { GetCommand, PutCommand , ScanCommand} from '@aws-sdk/lib-dynamodb';
 import { Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { AsientosService } from '../asientos/asientos.service';
-import { EstadoAsiento } from 'src/asientos/entities/asiento.entity';
 
 @Injectable()
 export class BusesService {
