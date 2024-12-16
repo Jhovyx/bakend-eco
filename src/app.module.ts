@@ -9,9 +9,10 @@ import { ViajesModule } from './viajes/viajes.module';
 import { SesionesModule } from './sesiones/sesiones.module';
 import { SesionesMiddleware } from './sesiones/sesiones.middleware';
 import { ReservasModule } from './reservas/reservas.module';
+import { PagosModule } from './pagos/pagos.module';
 
 @Module({
-  imports: [DynamodbModule, UsersModule, ActivitiesModule, BusesModule, AsientosModule, EstacionesModule, ViajesModule, SesionesModule, ReservasModule],
+  imports: [DynamodbModule, UsersModule, ActivitiesModule, BusesModule, AsientosModule, EstacionesModule, ViajesModule, SesionesModule, ReservasModule, PagosModule],
   controllers: [],
   providers: [SesionesMiddleware],
 })
