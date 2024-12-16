@@ -128,7 +128,7 @@ export class ReservasService {
   async findReservasByUser(idUsuario: string) {
       // Prepara el comando QueryCommand para buscar reservas por usuario
       const queryCommand = new QueryCommand({
-        TableName: 'asientos',
+        TableName: 'reservas',
         IndexName: 'idUsuario-index',
         KeyConditionExpression: '#idUsuario = :idUsuario',
         ExpressionAttributeNames: {

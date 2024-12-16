@@ -143,6 +143,9 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/reservas/reserva/:id', methods: ['GET'] },
     { url: '/v1/reservas/user/:id', methods: ['GET'] },
     { url: '/v1/reservas/:id',  metohds: ['PATCH']},
+
+    { url: '/v1/pago', methods: ['GET', 'POST'] },
+    { url: '/v1/pago/:id',  metohds: ['GET', 'PATCH']},
   ];
 
   clientRoutes = [
@@ -171,6 +174,9 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/reservas/reserva/:id', methods: ['GET'] },
     { url: '/v1/reservas/user/:id', methods: ['GET'] },
     { url: '/v1/reservas/:id',  metohds: ['PATCH']},
+
+    { url: '/v1/pago', methods: ['GET', 'POST'] },
+    { url: '/v1/pago/:id',  metohds: ['GET', 'PATCH']},
   ];
 
   noAuthRoutes = [
