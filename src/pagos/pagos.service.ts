@@ -17,7 +17,14 @@ export class PagosService {
   ){}
 
   async create(createPagoDto: CreatePagoDto) {
-    
+
+// Verificar si la reserva existe y obtener sus detalles
+  const reserva = await this.reservaService.findOne(createPagoDto.idReserva);
+
+  // Validar que la reserva está en estado PENDIENTE
+  if (reserva.estado !== EstadoReserva.PENDIENTE)
+    throw new NotFoundException('No se puede procesar el pago.');    
+
     let newpago: Pago = {
       ...createPagoDto,
       primaryKey: uuid(),

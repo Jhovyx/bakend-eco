@@ -27,6 +27,12 @@ export class Reserva {
 
     @Field(() => Int,{nullable: true})
     updatedAt?: number;
+
+    @Field(() => Int)
+    costoUnitario: number; // Costo por pasajero o asiento
+    
+    @Field(() => Int)
+    costoTotal: number; 
 }
 
 export enum EstadoReserva {
