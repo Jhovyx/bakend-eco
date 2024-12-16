@@ -26,7 +26,6 @@ export class CreatePagoDto {
   @Matches(/^\d{3,4}$/,)
   codigoSeguridad: string;
 
-  @IsInt() // Asegura que sea un número entero
   @Min(1) // Asegura que el monto sea mayor o igual a 0
   monto: number;
 
