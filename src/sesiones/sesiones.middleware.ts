@@ -171,7 +171,7 @@ export class SesionesMiddleware implements NestMiddleware {
     { url: '/v1/asientos/deseleccionar/:id', methods: ['PATCH'] }, //desseleccionar asientos, por id
 
     { url: '/v1/reservas', methods: ['GET', 'POST'] },
-    { url: '/v1/reservas/reserva/:id', methods: ['GET'] },
+    { url: '/v1/reservas/reserva/:id', methods: ['GET', 'PATCH'] },
     { url: '/v1/reservas/user/:id', methods: ['GET'] },
     { url: '/v1/reservas/:id',  metohds: ['PATCH']},
 

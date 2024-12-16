@@ -27,7 +27,7 @@ export class ReservasController {
     return this.reservasService.findReservasByUser(id);
   }
 
-  @Patch(':id')
+  @Patch('reserva/:id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateReservaDto: UpdateReservaDto) {
     return this.reservasService.updatecancel(id, updateReservaDto);
   }
